@@ -1,6 +1,6 @@
 {
-  "name": "Wanderlust Travel Tracker",
-  "short_name": "Wanderlust",
+  "name": "Memory Atlas",
+  "short_name": "Memory Atlas",
   "description": "Capture and map your travel memories.",
   "start_url": "/",
   "display": "standalone",

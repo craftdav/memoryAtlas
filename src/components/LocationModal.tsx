@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Calendar, MapPin, Heart, Image as ImageIcon, Trash2, Globe, Save, Plus, Search, Loader2, User } from 'lucide-react';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { VisitedLocation } from '../types';
 import { COUNTRIES } from '../lib/countries';
 import { cn } from '../lib/utils';
@@ -139,10 +140,22 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
     onSave(formData);
   };
 
-  const handleImageAdd = () => {
-    const url = prompt("Enter image URL");
-    if (url) {
-      setFormData(prev => ({ ...prev, images: [...(prev.images || []), url] }));
+  const handleImageAdd = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos // Force gallery
+      });
+
+      if (image.webPath) {
+        setFormData(prev => ({ ...prev, images: [...(prev.images || []), image.webPath!] }));
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      // Fallback to URL prompt if native picker fails or user cancels (optional)
+      // For now, just logging error as user specifically asked for gallery
     }
   };
 

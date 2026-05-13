@@ -68,7 +68,7 @@ export default function Sidebar({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `wanderlust_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `memory_atlas_backup_${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -113,7 +113,7 @@ export default function Sidebar({
     >
       {/* Header */}
       <div className="pt-10 pb-6 px-8 flex items-center justify-between">
-        <h2 className="font-display text-4xl font-extrabold tracking-tighter">Wanderlust</h2>
+        <h2 className="font-display text-4xl font-extrabold tracking-tighter">Memory Atlas</h2>
         <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-gray-50 hover:bg-gray-100 rounded-full transition-colors group">
           <X size={20} className="opacity-40 group-hover:opacity-100 transition-opacity" />
         </button>

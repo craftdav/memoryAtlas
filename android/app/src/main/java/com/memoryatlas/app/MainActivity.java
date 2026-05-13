@@ -1,4 +1,4 @@
-package com.wanderlust.app;
+package com.memoryatlas.app;
 
 import com.getcapacitor.BridgeActivity;
 

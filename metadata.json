@@ -1,5 +1,5 @@
 {
-  "name": "Wanderlust: Personal Travel Map",
+  "name": "Memory Atlas",
   "description": "An interactive travel tracker to map countries and cities visited, with personal notes and photos for every location.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": []

@@ -29,7 +29,7 @@ export default function App() {
 
   // Load state from local storage for offline mode/demo
   useEffect(() => {
-    const saved = localStorage.getItem('wanderlust_data');
+    const saved = localStorage.getItem('memory_atlas_data');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -43,7 +43,7 @@ export default function App() {
 
   // Save changes
   useEffect(() => {
-    localStorage.setItem('wanderlust_data', JSON.stringify({
+    localStorage.setItem('memory_atlas_data', JSON.stringify({
       locations: visitedLocations,
       settings
     }));
