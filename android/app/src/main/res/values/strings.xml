@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Wanderlust</string>
+    <string name="title_activity_main">Wanderlust</string>
+    <string name="package_name">com.wanderlust.app</string>
+    <string name="custom_url_scheme">com.wanderlust.app</string>
+</resources>
