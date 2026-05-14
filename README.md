@@ -1,20 +1,16 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+I'm not a developer, I have no idea what I'm supposed to put here, so I'll describe how anyone can download this app on their phone.
+Step 1
+   You see this window with many many files and folders, but you have no idea which one gets you the app.
+Step 2
+   Go into the following folders: android -> app -> build/outputs/apk/debug
+Step 3
+   You should see a file named memoryAtlasv1.0.0 or something like that (the version doesnt matter) or if I forgot to name it it will be called app-debug.apk.
+Step 4
+   Download this file to your phone.
+Step 5
+   Somehow open the file on your phone, either by clicking the downloaded notification or by searching in the files.
+Step 6
+   It's downloaded. If you have suggestions, problems, then tell me please.
 
-# Run and deploy your AI Studio app
-
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/569b2535-c5af-42f1-bb2a-65b00044d6c3
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+DISCLAIMER
+THIS DOESN'T WORK ON IPHONES!
