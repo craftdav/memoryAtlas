@@ -23,6 +23,9 @@ out/
 generated/
 intermediates/
 tmp/
+androidTest/
+logs/
+
 
 # Local configuration file (sdk path, etc)
 local.properties
