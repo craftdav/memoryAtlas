@@ -11,6 +11,7 @@ interface CountryDetailsModalProps {
   onClose: () => void;
   onAddMemory: (countryCode: string) => void;
   onEditMemory: (memory: VisitedLocation) => void;
+  darkMode?: boolean;
 }
 
 interface CountryInfo {
@@ -27,7 +28,8 @@ export default function CountryDetailsModal({
   memories, 
   onClose, 
   onAddMemory, 
-  onEditMemory 
+  onEditMemory,
+  darkMode
 }: CountryDetailsModalProps) {
   const [info, setInfo] = useState<CountryInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,13 +77,22 @@ export default function CountryDetailsModal({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="relative w-full max-w-2xl bg-white rounded-t-[3rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[96vh] mt-auto md:mt-0"
+        className={cn(
+          "relative w-full max-w-2xl rounded-t-[3rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[96vh] mt-auto md:mt-0 transition-colors duration-500",
+          darkMode ? "bg-slate-900 text-white" : "bg-white text-black"
+        )}
       >
         {/* Mobile Handle */}
-        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 md:hidden" />
+        <div className={cn(
+          "w-12 h-1.5 rounded-full mx-auto mt-4 mb-2 md:hidden",
+          darkMode ? "bg-white/20" : "bg-gray-200"
+        )} />
 
         {/* Header / Flag */}
-        <div className="relative min-h-[180px] md:min-h-[220px] bg-gray-50 flex items-center justify-center overflow-hidden">
+        <div className={cn(
+          "relative min-h-[180px] md:min-h-[220px] flex items-center justify-center overflow-hidden transition-colors duration-500",
+          darkMode ? "bg-slate-950" : "bg-gray-50"
+        )}>
           {info?.flag ? (
             <img 
               src={info.flag} 
@@ -111,14 +122,20 @@ export default function CountryDetailsModal({
 
           <button 
             onClick={onClose}
-            className="absolute top-6 right-6 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all text-black z-20"
+            className={cn(
+              "absolute top-6 right-6 w-10 h-10 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all z-20",
+              darkMode ? "bg-black/50 text-white" : "bg-white/90 text-black"
+            )}
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Country Stats */}
-        <div className="grid grid-cols-2 border-y border-gray-100 divide-x divide-gray-100">
+        <div className={cn(
+          "grid grid-cols-2 border-y divide-x transition-colors duration-500",
+          darkMode ? "border-white/10 divide-white/10" : "border-gray-100 divide-gray-100"
+        )}>
           <div className="p-6 flex flex-col items-center justify-center gap-1">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] opacity-30">
               <Landmark size={12} /> Capital
@@ -137,12 +154,18 @@ export default function CountryDetailsModal({
         <div className="flex-1 overflow-y-auto no-scrollbar p-8 md:p-10 space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-black">Adventure Collection</h3>
+              <h3 className={cn(
+                "text-xs font-black uppercase tracking-[0.3em]",
+                darkMode ? "text-white" : "text-black"
+              )}>Adventure Collection</h3>
               <p className="text-sm opacity-40 font-medium">{memories.length} captured moments in {countryName}</p>
             </div>
             <button
               onClick={() => onAddMemory(countryCode)}
-              className="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group"
+              className={cn(
+                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group",
+                darkMode ? "bg-white text-slate-900" : "bg-black text-white"
+              )}
             >
               <Plus size={24} className="group-hover:rotate-90 transition-transform duration-300" />
             </button>
@@ -154,9 +177,17 @@ export default function CountryDetailsModal({
                 <button
                   key={memory.id}
                   onClick={() => onEditMemory(memory)}
-                  className="group relative flex items-center gap-5 p-5 bg-gray-50 rounded-[2rem] hover:bg-black hover:text-white transition-all duration-300 text-left"
+                  className={cn(
+                    "group relative flex items-center gap-5 p-5 rounded-[2rem] transition-all duration-300 text-left",
+                    darkMode
+                      ? "bg-white/5 hover:bg-white hover:text-slate-900"
+                      : "bg-gray-50 hover:bg-black hover:text-white"
+                  )}
                 >
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden bg-gray-200 shrink-0 shadow-sm transition-transform group-hover:scale-95">
+                  <div className={cn(
+                    "w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-sm transition-transform group-hover:scale-95",
+                    darkMode ? "bg-slate-800" : "bg-gray-200"
+                  )}>
                     {memory.images?.[0] ? (
                       <img src={memory.images[0]} alt={memory.name} className="w-full h-full object-cover" />
                     ) : (
@@ -208,7 +239,10 @@ export default function CountryDetailsModal({
         </div>
 
         {/* Footer info */}
-        <div className="p-8 border-t border-gray-50 bg-gray-50/50 flex items-center justify-center gap-4">
+        <div className={cn(
+          "p-8 border-t flex items-center justify-center gap-4 transition-colors duration-500",
+          darkMode ? "border-white/5 bg-slate-950/50" : "border-gray-50 bg-gray-50/50"
+        )}>
            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] opacity-20">
              <Landmark size={12} /> {info?.region || '...'} • {info?.subregion || '...'}
            </div>

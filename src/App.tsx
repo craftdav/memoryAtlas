@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   cityShade: '#1d4ed8',    // blue-700
   username: 'Globetrotter',
   profileImage: undefined,
+  darkMode: false,
 };
 
 export default function App() {
@@ -84,7 +85,10 @@ export default function App() {
   };
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-white font-sans selection:bg-black selection:text-white">
+    <div className={cn(
+      "relative h-screen w-screen overflow-hidden font-sans selection:bg-black selection:text-white transition-colors duration-500",
+      settings.darkMode ? "bg-slate-950 text-white selection:bg-white selection:text-black" : "bg-white text-black"
+    )}>
       {/* Header Stats */}
       <TopStats 
         percentage={percentageVisited} 
@@ -92,6 +96,7 @@ export default function App() {
         cityCount={citiesVisitedCount}
         totalCountries={COUNTRIES.length} 
         onMenuClick={() => setIsSidebarOpen(true)}
+        darkMode={settings.darkMode}
       />
 
       {/* Main Map */}
@@ -158,6 +163,7 @@ export default function App() {
               setSelectedLocation(memory);
               setSelectedCountryCode(null);
             }}
+            darkMode={settings.darkMode}
           />
         )}
         {(selectedLocation || isAddingNew) && (
@@ -172,6 +178,7 @@ export default function App() {
             }}
             onSave={isAddingNew ? handleAddLocation : handleUpdateLocation}
             onDelete={handleDeleteLocation}
+            darkMode={settings.darkMode}
           />
         )}
       </AnimatePresence>

@@ -13,6 +13,7 @@ interface LocationModalProps {
   onClose: () => void;
   onSave: (location: any) => void;
   onDelete?: (id: string) => void;
+  darkMode?: boolean;
 }
 
 interface CityResult {
@@ -25,7 +26,7 @@ interface CityResult {
   feature_code?: string;
 }
 
-export default function LocationModal({ location, initialData, isNew, onClose, onSave, onDelete }: LocationModalProps) {
+export default function LocationModal({ location, initialData, isNew, onClose, onSave, onDelete, darkMode }: LocationModalProps) {
   const [formData, setFormData] = useState<Partial<VisitedLocation>>(
     location || initialData || {
       name: '',
@@ -204,13 +205,22 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="relative w-full max-w-xl bg-white rounded-t-[3rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[96vh] mt-auto md:mt-0"
+        className={cn(
+          "relative w-full max-w-xl rounded-t-[3rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[96vh] mt-auto md:mt-0 transition-colors duration-500",
+          darkMode ? "bg-slate-900 text-white" : "bg-white text-black"
+        )}
       >
         {/* Mobile Handle */}
-        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 md:hidden" />
+        <div className={cn(
+          "w-12 h-1.5 rounded-full mx-auto mt-4 mb-2 md:hidden",
+          darkMode ? "bg-white/20" : "bg-gray-200"
+        )} />
 
         {/* Header Photo */}
-        <div className="relative group h-[200px] md:h-[280px] bg-[#F7F7F7] overflow-hidden">
+        <div className={cn(
+          "relative group h-[200px] md:h-[280px] overflow-hidden transition-colors duration-500",
+          darkMode ? "bg-slate-950" : "bg-[#F7F7F7]"
+        )}>
           {formData.images && formData.images.length > 0 ? (
             <div
               ref={scrollRef}
@@ -239,7 +249,10 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
              <button 
                 type="button" 
                 onClick={onClose}
-                className="w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                className={cn(
+                  "w-10 h-10 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform",
+                  darkMode ? "bg-black/50 text-white" : "bg-white/90 text-black"
+                )}
              >
                <X size={20} />
              </button>
@@ -249,7 +262,9 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                 onClick={() => setFormData(p => ({ ...p, isFavorite: !p.isFavorite }))}
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105",
-                  formData.isFavorite ? "bg-red-500 text-white" : "bg-white/90 backdrop-blur text-black/40 hover:text-red-500"
+                  formData.isFavorite
+                    ? "bg-red-500 text-white"
+                    : (darkMode ? "bg-black/50 backdrop-blur text-white/40 hover:text-red-500" : "bg-white/90 backdrop-blur text-black/40 hover:text-red-500")
                 )}
               >
                 <Heart size={20} fill={formData.isFavorite ? "currentColor" : "none"} />
@@ -259,7 +274,10 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
           <button 
             type="button"
             onClick={handleImageAdd}
-            className="absolute bottom-6 right-6 bg-black text-white px-5 py-2.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-xs font-bold z-20"
+            className={cn(
+              "absolute bottom-6 right-6 px-5 py-2.5 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 text-xs font-bold z-20",
+              darkMode ? "bg-white text-slate-900" : "bg-black text-white"
+            )}
           >
             <Plus size={16} />
             Photo
@@ -301,7 +319,12 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                     setFormData(prev => ({ ...prev, countryCode: undefined }));
                     setShowCountryResults(true);
                   }}
-                  className="w-full pl-12 pr-6 py-4 bg-gray-50 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent focus:border-black transition-all"
+                  className={cn(
+                    "w-full pl-12 pr-6 py-4 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent transition-all",
+                    darkMode
+                      ? "bg-white/5 focus:border-white text-white"
+                      : "bg-gray-50 focus:border-black text-black"
+                  )}
                 />
 
                 <AnimatePresence>
@@ -310,14 +333,22 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute z-20 top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 max-h-60 overflow-y-auto no-scrollbar overscroll-contain"
+                      className={cn(
+                        "absolute z-20 top-full left-0 right-0 mt-2 rounded-2xl shadow-2xl border max-h-60 overflow-y-auto no-scrollbar overscroll-contain",
+                        darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-100"
+                      )}
                     >
                       {filteredCountries.length > 0 ? filteredCountries.map((c) => (
                         <button
                           key={c.id}
                           type="button"
                           onClick={() => handleSelectCountry(c)}
-                          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-none text-left"
+                          className={cn(
+                            "w-full flex items-center justify-between p-4 transition-colors border-b last:border-none text-left",
+                            darkMode
+                              ? "hover:bg-white/5 border-white/5"
+                              : "hover:bg-gray-50 border-gray-50"
+                          )}
                         >
                           <span className="text-sm font-bold">{c.name}</span>
                           <span className="text-[9px] font-mono opacity-20">{c.id}</span>
@@ -340,7 +371,12 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                 type="date" 
                 value={formData.date}
                 onChange={e => setFormData(p => ({ ...p, date: e.target.value }))}
-                className="w-full bg-gray-50 p-4 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent focus:border-black transition-all"
+                className={cn(
+                  "w-full p-4 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent transition-all",
+                  darkMode
+                    ? "bg-white/5 focus:border-white text-white color-scheme-dark"
+                    : "bg-gray-50 focus:border-black text-black"
+                )}
               />
             </div>
           </div>
@@ -365,7 +401,12 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                     setFormData(p => ({ ...p, cityName: undefined, coordinates: undefined }));
                   }
                 }}
-                className="w-full pl-12 pr-6 py-4 bg-gray-50 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent focus:border-black transition-all"
+                className={cn(
+                  "w-full pl-12 pr-6 py-4 rounded-2xl text-sm font-bold focus:outline-none border-2 border-transparent transition-all",
+                  darkMode
+                    ? "bg-white/5 focus:border-white text-white"
+                    : "bg-gray-50 focus:border-black text-black"
+                )}
               />
               
               <AnimatePresence>
@@ -374,14 +415,22 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute z-10 top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 max-h-60 overflow-y-auto no-scrollbar overscroll-contain"
+                    className={cn(
+                      "absolute z-10 top-full left-0 right-0 mt-2 rounded-2xl shadow-2xl border max-h-60 overflow-y-auto no-scrollbar overscroll-contain",
+                      darkMode ? "bg-slate-800 border-white/10" : "bg-white border-gray-100"
+                    )}
                   >
                     {cityResults.map((city, idx) => (
                       <button
                         key={`${city.name}-${idx}`}
                         type="button"
                         onClick={() => handleSelectCity(city)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-none text-left"
+                        className={cn(
+                          "w-full flex items-center justify-between p-4 transition-colors border-b last:border-none text-left",
+                          darkMode
+                            ? "hover:bg-white/5 border-white/5"
+                            : "hover:bg-gray-50 border-gray-50"
+                        )}
                       >
                         <div>
                           <p className="text-sm font-bold">{city.name}</p>
@@ -406,18 +455,29 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
               placeholder="What made this place unforgettable?"
               value={formData.notes}
               onChange={e => setFormData(p => ({ ...p, notes: e.target.value }))}
-              className="w-full bg-gray-50 p-6 rounded-[2rem] text-sm font-medium focus:outline-none border-2 border-transparent focus:border-black transition-all resize-none leading-relaxed placeholder:opacity-20"
+              className={cn(
+                "w-full p-6 rounded-[2rem] text-sm font-medium focus:outline-none border-2 border-transparent transition-all resize-none leading-relaxed placeholder:opacity-20",
+                darkMode
+                  ? "bg-white/5 focus:border-white text-white"
+                  : "bg-gray-50 focus:border-black text-black"
+              )}
             />
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-8 md:p-10 border-t border-gray-100 flex items-center justify-between bg-white pt-6">
+        <div className={cn(
+          "p-8 md:p-10 border-t flex items-center justify-between pt-6 transition-colors duration-500",
+          darkMode ? "bg-slate-900 border-white/5" : "bg-white border-gray-100"
+        )}>
           {!isNew && onDelete && (
             <button 
               type="button" 
               onClick={() => location && onDelete(location.id)}
-              className="w-14 h-14 flex items-center justify-center text-red-500 bg-red-50 hover:bg-red-100 rounded-2xl transition-all group"
+              className={cn(
+                "w-14 h-14 flex items-center justify-center rounded-2xl transition-all group",
+                darkMode ? "bg-red-500/10 text-red-400 hover:bg-red-500/20" : "bg-red-50 text-red-500 hover:bg-red-100"
+              )}
             >
               <Trash2 size={24} className="group-hover:scale-110 transition-transform" />
             </button>
@@ -432,7 +492,12 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
             </button>
             <button 
               type="submit"
-              className="flex-1 min-w-[200px] bg-black text-white px-10 py-5 rounded-[1.5rem] flex items-center justify-center gap-3 hover:bg-[#1A1A1A] active:scale-[0.98] transition-all shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)]"
+              className={cn(
+                "flex-1 min-w-[200px] px-10 py-5 rounded-[1.5rem] flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)]",
+                darkMode
+                  ? "bg-white text-slate-900 hover:bg-gray-100"
+                  : "bg-black text-white hover:bg-[#1A1A1A]"
+              )}
             >
               <Save size={18} />
               <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{isNew ? 'Archive Entry' : 'Update Log'}</span>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- The Polaroid Frame (Black) -->
+    <path
+        android:fillColor="#121212"
+        android:pathData="M22,14c-2.21,0 -4,1.79 -4,4v72c0,2.21 1.79,4 4,4h64c2.21,0 4,-1.79 4,-4v-72c0,-2.21 -1.79,-4 -4,-4h-64z" />
+
+    <!-- The Photo Area (Dark background for "space") -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M26,18h56v56h-56z" />
+
+    <!-- The Earth (Water - Blue) -->
+    <path
+        android:fillColor="#3B82F6"
+        android:pathData="M54,46m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+
+    <!-- Continents (Land - Green) - Simplified but recognizable shapes -->
+    <group android:translateX="54" android:translateY="46">
+        <!-- Americas -->
+        <path
+            android:fillColor="#22C55E"
+            android:pathData="M-18,-12c2,1 4,0 6,2c2,2 1,5 3,7c2,2 4,1 4,4c0,3 -2,5 -4,5c-2,0 -4,-2 -5,-4c-1,-2 -2,-4 -4,-5c-2,-1 -5,-1 -7,-3c-2,-2 -1,-5 1,-7c2,-2 3,-6 6,-6z M-14,10c1,2 3,5 1,8c-2,3 -5,4 -7,2c-2,-2 -1,-6 1,-8c2,-2 4,-4 5,-2z" />
+
+        <!-- Eurasia & Africa -->
+        <path
+            android:fillColor="#22C55E"
+            android:pathData="M4,-10c4,0 8,3 10,6c2,3 1,8 4,11c3,3 7,2 7,6c0,4 -4,7 -8,7c-4,0 -7,-3 -10,-6c-3,-3 -6,-2 -9,-5c-3,-3 -2,-8 1,-11c3,-3 3,-8 5,-8z M5,14c2,0 4,2 4,5c0,3 -2,5 -4,5c-2,0 -4,-2 -4,-5c0,-3 2,-5 4,-5z" />
+
+        <!-- Australia -->
+        <path
+            android:fillColor="#22C55E"
+            android:pathData="M18,16c2,0 3,1 3,3c0,2 -1,3 -3,3c-2,0 -3,-1 -3,-3c0,-2 1,-3 3,-3z" />
+    </group>
+
+    <!-- Subtle Atmosphere/Glow effect -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.1"
+        android:strokeWidth="1"
+        android:pathData="M54,46m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+
+</vector>

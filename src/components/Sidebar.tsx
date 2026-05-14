@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings as SettingsIcon, User, X, ChevronRight, Heart, Calendar, Globe, Plus, Pencil, Image as ImageIcon, Check, Download, Upload } from 'lucide-react';
+import { Settings as SettingsIcon, User, X, ChevronRight, Heart, Calendar, Globe, Plus, Pencil, Image as ImageIcon, Check, Download, Upload, Moon, Sun } from 'lucide-react';
 import { VisitedLocation, UserSettings } from '../types';
 import { COUNTRIES } from '../lib/countries';
 import { cn } from '../lib/utils';
@@ -109,12 +109,18 @@ export default function Sidebar({
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-      className="fixed inset-y-0 left-0 w-full md:w-[420px] bg-white z-50 shadow-[20px_0_60px_-15px_rgba(0,0,0,0.1)] flex flex-col"
+      className={cn(
+        "fixed inset-y-0 left-0 w-full md:w-[420px] z-50 shadow-[20px_0_60px_-15px_rgba(0,0,0,0.1)] flex flex-col transition-colors duration-300",
+        settings.darkMode ? "bg-slate-900 text-white" : "bg-white text-black"
+      )}
     >
       {/* Header */}
       <div className="pt-10 pb-6 px-8 flex items-center justify-between">
         <h2 className="font-display text-4xl font-extrabold tracking-tighter">Memory Atlas</h2>
-        <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-gray-50 hover:bg-gray-100 rounded-full transition-colors group">
+        <button onClick={onClose} className={cn(
+          "w-10 h-10 flex items-center justify-center rounded-full transition-colors group",
+          settings.darkMode ? "bg-white/5 hover:bg-white/10" : "bg-gray-50 hover:bg-gray-100"
+        )}>
           <X size={20} className="opacity-40 group-hover:opacity-100 transition-opacity" />
         </button>
       </div>
@@ -128,8 +134,8 @@ export default function Sidebar({
               className={cn(
                 "w-full flex items-center justify-between p-6 rounded-3xl transition-all",
                 activeTab === item.id 
-                  ? "bg-black text-white shadow-xl scale-[1.02]" 
-                  : "bg-gray-50 text-black/60 hover:bg-gray-100"
+                  ? (settings.darkMode ? "bg-white text-slate-950 shadow-xl scale-[1.02]" : "bg-black text-white shadow-xl scale-[1.02]")
+                  : (settings.darkMode ? "bg-white/5 text-white/60 hover:bg-white/10" : "bg-gray-50 text-black/60 hover:bg-gray-100")
               )}
             >
               <div className="flex items-center gap-4">
@@ -164,7 +170,12 @@ export default function Sidebar({
                             className="relative pl-8 w-full text-left group"
                           >
                             <div className="absolute left-[-5px] top-1.5 w-2.5 h-2.5 rounded-full bg-white border-2 border-black group-hover:bg-black transition-all" />
-                            <div className="bg-gray-50 group-hover:bg-black group-hover:text-white p-5 rounded-3xl transition-all border border-transparent shadow-sm">
+                            <div className={cn(
+                              "p-5 rounded-3xl transition-all border border-transparent shadow-sm",
+                              settings.darkMode
+                                ? "bg-white/5 group-hover:bg-white group-hover:text-slate-900"
+                                : "bg-gray-50 group-hover:bg-black group-hover:text-white"
+                            )}>
                               <div className="flex items-start justify-between">
                                 <div>
                                   <p className="text-[9px] font-bold uppercase tracking-widest opacity-30 mb-1 group-hover:opacity-60">
@@ -191,6 +202,42 @@ export default function Sidebar({
                       <div className="space-y-8 py-6">
                         <section>
                           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] opacity-30 mb-6">
+                            <Moon size={12} /> Mode Shift
+                          </div>
+                          <button
+                            onClick={() => onUpdateSettings({ ...settings, darkMode: !settings.darkMode })}
+                            className={cn(
+                              "w-full flex items-center justify-between p-5 rounded-3xl border-2 transition-all",
+                              settings.darkMode
+                                ? "border-white/20 bg-white/5"
+                                : "border-transparent bg-gray-50 hover:bg-gray-100"
+                            )}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className={cn(
+                                "w-10 h-10 rounded-full flex items-center justify-center shadow-lg",
+                                settings.darkMode ? "bg-white text-slate-900" : "bg-black text-white"
+                              )}>
+                                {settings.darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                              </div>
+                              <span className="text-base font-bold tracking-tight">
+                                {settings.darkMode ? 'Luminous Day' : 'Shadow Night'}
+                              </span>
+                            </div>
+                            <div className={cn(
+                              "w-12 h-6 rounded-full relative transition-colors duration-300",
+                              settings.darkMode ? "bg-blue-500" : "bg-gray-300"
+                            )}>
+                              <div className={cn(
+                                "absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300",
+                                settings.darkMode ? "left-7" : "left-1"
+                              )} />
+                            </div>
+                          </button>
+                        </section>
+
+                        <section>
+                          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] opacity-30 mb-6">
                             <Globe size={12} /> Visual Universe
                           </div>
                           <div className="grid grid-cols-1 gap-3">
@@ -198,6 +245,7 @@ export default function Sidebar({
                               <button
                                 key={option.name}
                                 onClick={() => onUpdateSettings({
+                                  ...settings,
                                   primaryColor: option.primary,
                                   countryShade: option.light,
                                   cityShade: option.dark
@@ -205,8 +253,8 @@ export default function Sidebar({
                                 className={cn(
                                   "flex items-center p-5 rounded-3xl border-2 transition-all",
                                   settings.primaryColor === option.primary 
-                                    ? "border-black bg-black/5 shadow-inner" 
-                                    : "border-transparent bg-gray-50 hover:bg-gray-100"
+                                    ? (settings.darkMode ? "border-white bg-white/10" : "border-black bg-black/5 shadow-inner")
+                                    : (settings.darkMode ? "border-transparent bg-white/5 hover:bg-white/10" : "border-transparent bg-gray-50 hover:bg-gray-100")
                                 )}
                               >
                                 <div className="flex -space-x-2 mr-6 scale-110">
@@ -217,7 +265,7 @@ export default function Sidebar({
                                   {option.name}
                                 </span>
                                 {settings.primaryColor === option.primary && (
-                                  <div className="ml-auto w-2 h-2 bg-black rounded-full animate-pulse" />
+                                  <div className={cn("ml-auto w-2 h-2 rounded-full animate-pulse", settings.darkMode ? "bg-white" : "bg-black")} />
                                 )}
                               </button>
                             ))}
@@ -231,12 +279,18 @@ export default function Sidebar({
                           <div className="grid grid-cols-2 gap-3">
                             <button
                               onClick={handleExport}
-                              className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-3xl hover:bg-black hover:text-white transition-all group"
+                              className={cn(
+                                "flex flex-col items-center justify-center p-6 rounded-3xl transition-all group",
+                                settings.darkMode ? "bg-white/5 hover:bg-white hover:text-slate-900" : "bg-gray-50 hover:bg-black hover:text-white"
+                              )}
                             >
                               <Download size={24} className="mb-2 opacity-40 group-hover:opacity-100" />
                               <span className="text-[10px] font-black uppercase tracking-widest">Export</span>
                             </button>
-                            <label className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-3xl hover:bg-black hover:text-white transition-all group cursor-pointer">
+                            <label className={cn(
+                              "flex flex-col items-center justify-center p-6 rounded-3xl transition-all group cursor-pointer",
+                              settings.darkMode ? "bg-white/5 hover:bg-white hover:text-slate-900" : "bg-gray-50 hover:bg-black hover:text-white"
+                            )}>
                               <input type="file" className="hidden" accept=".json" onChange={handleImport} />
                               <Upload size={24} className="mb-2 opacity-40 group-hover:opacity-100" />
                               <span className="text-[10px] font-black uppercase tracking-widest">Import</span>
@@ -248,7 +302,10 @@ export default function Sidebar({
 
                     {/* PROFILE SUB-MENU */}
                     {item.id === 'profile' && (
-                      <div className="flex flex-col items-center text-center space-y-8 py-10 bg-gray-50 rounded-[3rem] mt-4 relative">
+                      <div className={cn(
+                        "flex flex-col items-center text-center space-y-8 py-10 rounded-[3rem] mt-4 relative transition-colors duration-500",
+                        settings.darkMode ? "bg-white/5" : "bg-gray-50"
+                      )}>
                         {/* Edit Button - Bottom Left, moved even lower */}
                         <div className="absolute bottom-2 left-6 z-10">
                           <button
@@ -260,7 +317,9 @@ export default function Sidebar({
                             }}
                             className={cn(
                               "w-8 h-8 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95",
-                              isEditingProfile ? "bg-black text-white" : "bg-white text-black hover:bg-gray-100"
+                              isEditingProfile
+                                ? (settings.darkMode ? "bg-white text-slate-900" : "bg-black text-white")
+                                : (settings.darkMode ? "bg-slate-800 text-white hover:bg-slate-700" : "bg-white text-black hover:bg-gray-100")
                             )}
                           >
                             {isEditingProfile ? <Check size={14} /> : <Pencil size={14} />}
@@ -285,7 +344,10 @@ export default function Sidebar({
                                   }
                                 }}
                               />
-                              <div className="w-32 h-32 rounded-[2.5rem] bg-white flex items-center justify-center border-4 border-white shadow-2xl overflow-hidden relative">
+                              <div className={cn(
+                                "w-32 h-32 rounded-[2.5rem] flex items-center justify-center border-4 shadow-2xl overflow-hidden relative transition-colors duration-500",
+                                settings.darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-white"
+                              )}>
                                 {settings.profileImage ? (
                                   <img src={settings.profileImage} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
@@ -297,7 +359,10 @@ export default function Sidebar({
                               </div>
                             </label>
                           ) : (
-                            <div className="w-32 h-32 rounded-[2.5rem] bg-white flex items-center justify-center border-4 border-white shadow-2xl overflow-hidden">
+                            <div className={cn(
+                                "w-32 h-32 rounded-[2.5rem] flex items-center justify-center border-4 shadow-2xl overflow-hidden transition-colors duration-500",
+                                settings.darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-white"
+                              )}>
                               {settings.profileImage ? (
                                 <img src={settings.profileImage} alt="Profile" className="w-full h-full object-cover" />
                               ) : (
@@ -313,7 +378,10 @@ export default function Sidebar({
                               type="text"
                               value={tempUsername}
                               onChange={(e) => setTempUsername(e.target.value)}
-                              className="w-full text-center font-display text-4xl font-extrabold tracking-tighter bg-transparent border-b-2 border-black/10 focus:border-black outline-none pb-1"
+                              className={cn(
+                                "w-full text-center font-display text-4xl font-extrabold tracking-tighter bg-transparent border-b-2 outline-none pb-1",
+                                settings.darkMode ? "border-white/10 focus:border-white" : "border-black/10 focus:border-black"
+                              )}
                               autoFocus
                             />
                           ) : (
@@ -325,22 +393,20 @@ export default function Sidebar({
                         </div>
                         
                         <div className="w-full grid grid-cols-2 gap-3 px-6 pb-12">
-                          <div className="p-4 bg-white rounded-3xl shadow-sm text-left group">
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover:opacity-100 transition-opacity">Memories</p>
-                            <p className="text-2xl font-display font-extrabold mt-1 tracking-tighter">{visitedLocations.length}</p>
-                          </div>
-                          <div className="p-4 bg-white rounded-3xl shadow-sm text-left group">
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover:opacity-100 transition-opacity">Nations</p>
-                            <p className="text-2xl font-display font-extrabold mt-1 tracking-tighter">{countriesVisitedCount}</p>
-                          </div>
-                          <div className="p-4 bg-white rounded-3xl shadow-sm text-left group">
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover:opacity-100 transition-opacity">Cities</p>
-                            <p className="text-2xl font-display font-extrabold mt-1 tracking-tighter">{citiesCount}</p>
-                          </div>
-                          <div className="p-4 bg-white rounded-3xl shadow-sm text-left group">
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover:opacity-100 transition-opacity">World Cover</p>
-                            <p className="text-2xl font-display font-extrabold mt-1 tracking-tighter">{worldPercentage}%</p>
-                          </div>
+                          {[
+                            { label: 'Memories', value: visitedLocations.length },
+                            { label: 'Nations', value: countriesVisitedCount },
+                            { label: 'Cities', value: citiesCount },
+                            { label: 'World Cover', value: `${worldPercentage}%` }
+                          ].map((stat) => (
+                            <div key={stat.label} className={cn(
+                              "p-4 rounded-3xl shadow-sm text-left group transition-colors duration-500",
+                              settings.darkMode ? "bg-slate-800" : "bg-white"
+                            )}>
+                              <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-20 group-hover:opacity-100 transition-opacity">{stat.label}</p>
+                              <p className="text-2xl font-display font-extrabold mt-1 tracking-tighter">{stat.value}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}

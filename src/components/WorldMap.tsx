@@ -8,6 +8,7 @@ import {
 } from "react-simple-maps";
 import { VisitedLocation, UserSettings } from '../types';
 import { COUNTRIES } from '../lib/countries';
+import { cn } from '../lib/utils';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
@@ -44,14 +45,17 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
   }, [visitedLocations]);
 
   return (
-    <div className="h-full w-full bg-white flex items-center justify-center">
+    <div className={cn(
+      "h-full w-full flex items-center justify-center transition-colors duration-500",
+      settings.darkMode ? "bg-slate-950" : "bg-white"
+    )}>
       <ComposableMap 
-        projectionConfig={{ scale: isMobile ? 140 : 180 }}
+        projectionConfig={{ scale: isMobile ? 190 : 180 }}
         style={{ width: "100%", height: "100%" }}
       >
         <ZoomableGroup 
-          center={isMobile ? [15, 15] : [20, 0]} 
-          zoom={isMobile ? 3 : 1} 
+          center={isMobile ? [10, 20] : [20, 0]}
+          zoom={isMobile ? 4 : 1}
           minZoom={1} 
           maxZoom={100}
         >
@@ -86,14 +90,16 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
                     }}
                     style={{
                       default: {
-                        fill: isVisited ? settings.countryShade : "#FAFAFA",
-                        stroke: "#E5E7EB",
+                        fill: isVisited
+                          ? settings.countryShade
+                          : (settings.darkMode ? "#1e293b" : "#FAFAFA"),
+                        stroke: settings.darkMode ? "#334155" : "#E5E7EB",
                         strokeWidth: 0.5,
                         outline: "none",
                       },
                       hover: {
-                        fill: isVisited ? settings.countryShade : "#F3F4F6",
-                        stroke: "#9CA3AF",
+                        fill: isVisited ? settings.countryShade : (settings.darkMode ? "#334155" : "#F3F4F6"),
+                        stroke: settings.darkMode ? "#475569" : "#9CA3AF",
                         strokeWidth: 0.5,
                         outline: "none",
                         cursor: "pointer"

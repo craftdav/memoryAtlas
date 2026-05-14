@@ -4,6 +4,7 @@ export interface UserSettings {
   cityShade: string;    // Darker shade
   username?: string;
   profileImage?: string;
+  darkMode: boolean;
 }
 
 export interface VisitedLocation {
