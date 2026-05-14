@@ -530,53 +530,22 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
                 axis="y"
                 values={formData.images || []}
                 onReorder={setImages}
-                className="grid grid-cols-2 md:grid-cols-3 gap-4"
+                className="flex flex-col gap-4"
               >
                 {formData.images?.map((img) => (
                   <GalleryItem
                     key={img}
                     img={img}
                     onOpen={() => setFullScreenImage(img)}
-                    onDragStart={() => setIsDraggingToTrash(true)}
-                    onDragEnd={(event, info) => {
-                      setIsDraggingToTrash(false);
-                      // Check if dropped in trash area (bottom center)
-                      const trashElement = document.getElementById('trash-can');
-                      if (trashElement) {
-                        const trashRect = trashElement.getBoundingClientRect();
-                        if (
-                          info.point.x >= trashRect.left &&
-                          info.point.x <= trashRect.right &&
-                          info.point.y >= trashRect.top &&
-                          info.point.y <= trashRect.bottom
-                        ) {
-                          setImages(formData.images!.filter(i => i !== img));
-                        }
-                      }
-                    }}
+                    onDelete={() => setImages(formData.images!.filter(i => i !== img))}
                   />
                 ))}
               </Reorder.Group>
             </div>
 
-            {/* Trash Can Drop Zone */}
-            <AnimatePresence>
-              {isDraggingToTrash && (
-                <motion.div
-                  initial={{ y: 100, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 100, opacity: 0 }}
-                  id="trash-can"
-                  className="mt-auto mx-auto w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white shadow-2xl z-[70] mb-8"
-                >
-                  <Trash2 size={40} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             <button
               onClick={handleImageAdd}
-              className="mt-auto bg-white text-black font-bold uppercase tracking-widest py-6 rounded-3xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all"
+              className="mt-6 bg-white text-black font-bold uppercase tracking-widest py-6 rounded-3xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all"
             >
               <Plus size={20} /> Add New Moment
             </button>
@@ -611,11 +580,10 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
   );
 }
 
-function GalleryItem({ img, onOpen, onDragStart, onDragEnd }: {
+function GalleryItem({ img, onOpen, onDelete }: {
   img: string,
   onOpen: () => void,
-  onDragStart: () => void,
-  onDragEnd: (event: any, info: any) => void
+  onDelete: () => void
 }) {
   const controls = useDragControls();
 
@@ -624,29 +592,44 @@ function GalleryItem({ img, onOpen, onDragStart, onDragEnd }: {
       value={img}
       dragControls={controls}
       dragListener={false}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      className="relative aspect-square rounded-[2rem] overflow-hidden bg-white/5 group active:scale-95 transition-transform cursor-grab"
+      className="relative w-full aspect-video rounded-[2rem] overflow-hidden bg-white/5 flex items-center justify-center group touch-none"
     >
       <img src={img} className="w-full h-full object-cover" alt="Gallery item" />
-      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpen();
-          }}
-          className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
-        >
-          <Maximize2 size={20} />
-        </button>
-        <button
-          type="button"
+
+      {/* Permanent Controls for Mobile */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 flex flex-col justify-between p-4">
+        <div className="flex justify-between items-start">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+          >
+            <Trash2 size={18} />
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+            className="w-10 h-10 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+          >
+            <Maximize2 size={18} />
+          </button>
+        </div>
+
+        {/* Drag Handle - Clearer and more reliable on mobile */}
+        <div
           onPointerDown={(e) => controls.start(e)}
-          className="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-xl cursor-grab active:cursor-grabbing"
+          className="w-full py-4 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center gap-3 cursor-grab active:cursor-grabbing active:bg-white/20 transition-colors"
         >
-          <GripVertical size={20} />
-        </button>
+          <GripVertical size={20} className="text-white/70" />
+          <span className="text-[10px] text-white font-black uppercase tracking-[0.2em]">Hold to Reorder</span>
+        </div>
       </div>
     </Reorder.Item>
   );

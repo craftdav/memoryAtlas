@@ -417,6 +417,13 @@ export default function Sidebar({
           </div>
         ))}
       </div>
+
+      {/* Version Data */}
+      <div className="py-4 px-8 text-center shrink-0">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-20">
+          Memory Atlas v1.0.0
+        </p>
+      </div>
     </motion.div>
   );
 }
