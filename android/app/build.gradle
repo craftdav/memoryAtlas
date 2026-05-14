@@ -22,6 +22,31 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "MemoryAtlas-${variant.name}-v${variant.versionName}.apk"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.assembleProvider.configure {
+                it.doLast {
+                    variant.outputs.each { output ->
+                        def outputFile = output.outputFile
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            copy {
+                                from outputFile
+                                into project.file("../../../release")
+                                rename { "app-release.apk" }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 repositories {
