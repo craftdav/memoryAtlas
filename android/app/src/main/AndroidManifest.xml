@@ -10,6 +10,8 @@
 
     <!-- Permissions for picking photos on Android 13 and above -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Permission for partial access to photos on Android 14 and above -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
     <application
         android:allowBackup="true"

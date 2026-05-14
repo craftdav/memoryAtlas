@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#F1F5F9</color>
-    <color name="polaroid_frame">#121212</color>
-    <color name="photo_area">#0F172A</color>
     <color name="earth_water">#3B82F6</color>
+    <color name="earth_water_dark">#2563EB</color>
     <color name="earth_land">#22C55E</color>
+    <color name="earth_land_dark">#16A34A</color>
     <color name="atmosphere_glow">#FFFFFF</color>
+    <color name="cloud_white">#F8FAFC</color>
 
     <!-- Theme Colors -->
     <color name="colorPrimary">#3B82F6</color>
