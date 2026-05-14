@@ -14,7 +14,7 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 interface WorldMapProps {
   visitedLocations: VisitedLocation[];
   settings: UserSettings;
-  onCountryClick: (countryCode: string) => void;
+  onCountryClick: (countryCode: string, countryName?: string) => void;
 }
 
 export default function WorldMap({ visitedLocations, settings, onCountryClick }: WorldMapProps) {
@@ -58,7 +58,7 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => {
-                const geoName = geo.properties.name.toLowerCase();
+                const geoName = (geo.properties?.name || geo.properties?.NAME || "").toLowerCase();
                 const geoId = geo.id; // Could be Alpha-3 or Numeric
                 
                 // Matches if any visited country's Alpha-3 OR official name matches the geometry
@@ -78,8 +78,10 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
                         c.id === geoId || c.name.toLowerCase() === geoName
                       );
                       const finalCode = countryData?.id || geoId;
+                      const finalName = countryData?.name || geo.properties?.name || geo.properties?.NAME || "Unknown Country";
+
                       if (finalCode) {
-                        onCountryClick(finalCode);
+                        onCountryClick(finalCode, finalName);
                       }
                     }}
                     style={{

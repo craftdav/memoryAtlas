@@ -24,6 +24,7 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<VisitedLocation | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
+  const [selectedCountryName, setSelectedCountryName] = useState<string | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [initialNewData, setInitialNewData] = useState<Partial<VisitedLocation> | null>(null);
 
@@ -98,7 +99,10 @@ export default function App() {
         <WorldMap 
           visitedLocations={visitedLocations} 
           settings={settings}
-          onCountryClick={(code) => setSelectedCountryCode(code)}
+          onCountryClick={(code, name) => {
+            setSelectedCountryCode(code);
+            setSelectedCountryName(name || null);
+          }}
         />
       </main>
 
@@ -136,9 +140,12 @@ export default function App() {
         {selectedCountryCode && (
           <CountryDetailsModal 
             countryCode={selectedCountryCode}
-            countryName={COUNTRIES.find(c => c.id === selectedCountryCode)?.name || 'Unknown'}
+            countryName={selectedCountryName || COUNTRIES.find(c => c.id === selectedCountryCode)?.name || 'Unknown'}
             memories={visitedLocations.filter(loc => loc.countryCode === selectedCountryCode)}
-            onClose={() => setSelectedCountryCode(null)}
+            onClose={() => {
+              setSelectedCountryCode(null);
+              setSelectedCountryName(null);
+            }}
             onAddMemory={(code) => {
               setInitialNewData({
                 countryCode: code,
