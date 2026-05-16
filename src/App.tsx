@@ -58,7 +58,12 @@ export default function App() {
   }, [visitedLocations]);
 
   const citiesVisitedCount = useMemo(() => {
-    return visitedLocations.filter(l => l.cityName || l.coordinates).length;
+    const uniqueCities = new Set(
+      visitedLocations
+        .filter(l => l.cityName)
+        .map(l => `${l.cityName?.toLowerCase()}-${l.countryCode}`)
+    );
+    return uniqueCities.size;
   }, [visitedLocations]);
 
   const percentageVisited = useMemo(() => {

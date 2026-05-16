@@ -44,7 +44,12 @@ export default function Sidebar({
   }, [visitedLocations]);
 
   const citiesCount = useMemo(() => {
-    return visitedLocations.filter(l => l.cityName).length;
+    const uniqueCities = new Set(
+      visitedLocations
+        .filter(l => l.cityName)
+        .map(l => `${l.cityName?.toLowerCase()}-${l.countryCode}`)
+    );
+    return uniqueCities.size;
   }, [visitedLocations]);
 
   const worldPercentage = useMemo(() => {
