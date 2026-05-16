@@ -163,11 +163,24 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
 
   const handleSelectCity = (city: CityResult) => {
     setCitySearch(city.name);
+
+    // Auto-select country if found
+    const country = COUNTRIES.find(c =>
+      c.name.toLowerCase() === city.country.toLowerCase() ||
+      c.aliases?.some(a => a.toLowerCase() === city.country.toLowerCase())
+    );
+
     setFormData(prev => ({
       ...prev,
       cityName: city.name,
-      coordinates: [city.longitude, city.latitude]
+      coordinates: [city.longitude, city.latitude],
+      countryCode: country?.id || prev.countryCode
     }));
+
+    if (country) {
+      setCountrySearch(country.name);
+    }
+
     setShowResults(false);
   };
 
