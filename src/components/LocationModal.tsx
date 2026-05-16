@@ -77,12 +77,24 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
   useEffect(() => {
     if (scrollRef.current && !showGallery) {
       const width = scrollRef.current.offsetWidth;
-      scrollRef.current.scrollTo({
-        left: currentImageIndex * width,
-        behavior: 'smooth'
-      });
+      const targetScroll = currentImageIndex * width;
+      // Only scroll if we are not already at the target position (with some margin)
+      if (Math.abs(scrollRef.current.scrollLeft - targetScroll) > 10) {
+        scrollRef.current.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+      }
     }
   }, [currentImageIndex, showGallery]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const index = Math.round(container.scrollLeft / container.offsetWidth);
+    if (index !== currentImageIndex) {
+      setCurrentImageIndex(index);
+    }
+  };
 
   // Click outside handler
   useEffect(() => {
@@ -171,18 +183,16 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
 
   const handleImageAdd = async () => {
     try {
-      const image = await Camera.getPhoto({
+      const result = await Camera.pickImages({
         quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Photos // Force gallery
       });
 
-      if (image.webPath) {
-        setFormData(prev => ({ ...prev, images: [...(prev.images || []), image.webPath!] }));
+      if (result.photos && result.photos.length > 0) {
+        const newImages = result.photos.map(p => p.webPath).filter(Boolean) as string[];
+        setFormData(prev => ({ ...prev, images: [...(prev.images || []), ...newImages] }));
       }
     } catch (error) {
-      console.error('Error picking image:', error);
+      console.error('Error picking images:', error);
     }
   };
 
@@ -225,11 +235,17 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
             <div
               ref={scrollRef}
               onClick={() => setShowGallery(true)}
-              className="flex h-full overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer"
+              onScroll={handleScroll}
+              className="flex h-full overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer touch-pan-x"
             >
               {formData.images.map((img, idx) => (
                 <div key={idx} className="relative min-w-full h-full snap-start">
-                  <img src={img} alt={`${formData.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${formData.name} ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    draggable="false"
+                  />
                   {formData.images!.length > 1 && (
                     <div className="absolute bottom-6 left-6 bg-black/40 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest z-30">
                       {idx + 1} / {formData.images!.length}
