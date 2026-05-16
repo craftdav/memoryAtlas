@@ -13,6 +13,8 @@ interface SidebarProps {
   settings: UserSettings;
   onUpdateSettings: (settings: UserSettings) => void;
   onImportData: (data: { locations: VisitedLocation[], settings: UserSettings }) => void;
+  activeTab: 'timeline' | 'settings' | 'profile' | null;
+  onActiveTabChange: (tab: 'timeline' | 'settings' | 'profile' | null) => void;
 }
 
 export default function Sidebar({ 
@@ -22,9 +24,10 @@ export default function Sidebar({
   onSelectLocation,
   settings,
   onUpdateSettings,
-  onImportData
+  onImportData,
+  activeTab,
+  onActiveTabChange
 }: SidebarProps) {
-  const [activeTab, setActiveTab] = useState<'timeline' | 'settings' | 'profile' | null>('timeline');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [tempUsername, setTempUsername] = useState(settings.username || '');
 
@@ -130,7 +133,7 @@ export default function Sidebar({
         {menuItems.map((item) => (
           <div key={item.id} className="space-y-2">
             <button
-              onClick={() => setActiveTab(activeTab === item.id ? null : item.id)}
+              onClick={() => onActiveTabChange(activeTab === item.id ? null : item.id)}
               className={cn(
                 "w-full flex items-center justify-between p-6 rounded-3xl transition-all",
                 activeTab === item.id 

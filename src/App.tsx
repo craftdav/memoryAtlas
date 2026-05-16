@@ -23,6 +23,7 @@ export default function App() {
   const [visitedLocations, setVisitedLocations] = useState<VisitedLocation[]>([]);
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeSidebarTab, setActiveSidebarTab] = useState<'timeline' | 'settings' | 'profile' | null>('timeline');
   const [selectedLocation, setSelectedLocation] = useState<VisitedLocation | null>(null);
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
   const [selectedCountryName, setSelectedCountryName] = useState<string | null>(null);
@@ -128,6 +129,8 @@ export default function App() {
               setSelectedLocation(loc);
               setIsSidebarOpen(false);
             }}
+            activeTab={activeSidebarTab}
+            onActiveTabChange={setActiveSidebarTab}
           />
         )}
       </AnimatePresence>
