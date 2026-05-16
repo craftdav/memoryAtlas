@@ -112,8 +112,13 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
 
   // Filtered Countries (Alphabetical)
   const filteredCountries = useMemo(() => {
+    const search = countrySearch.toLowerCase();
     return COUNTRIES
-      .filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
+      .filter(c =>
+        c.name.toLowerCase().includes(search) ||
+        c.id.toLowerCase().includes(search) ||
+        c.aliases?.some(a => a.toLowerCase().includes(search))
+      )
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [countrySearch]);
 

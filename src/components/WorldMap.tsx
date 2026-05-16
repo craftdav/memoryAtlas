@@ -65,11 +65,19 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
                 const geoName = (geo.properties?.name || geo.properties?.NAME || "").toLowerCase();
                 const geoId = geo.id; // Could be Alpha-3 or Numeric
                 
-                // Matches if any visited country's Alpha-3 OR official name matches the geometry
+                // Matches if any visited country's Alpha-3, Numeric OR any alias matches the geometry
                 const isVisited = Array.from(visitedCountryCodes).some(code => {
                   if (!code) return false;
-                  const officialName = countryCodeToOfficialName.get(code);
-                  return code === geoId || officialName === geoName;
+                  const country = COUNTRIES.find(c => c.id === code);
+                  if (!country) return code === geoId;
+
+                  const geoIdStr = String(geoId).padStart(3, '0');
+                  return (
+                    country.id === geoId ||
+                    country.numeric === geoIdStr ||
+                    country.name.toLowerCase() === geoName ||
+                    country.aliases?.some(a => a.toLowerCase() === geoName)
+                  );
                 });
                 
                 return (
@@ -78,8 +86,12 @@ export default function WorldMap({ visitedLocations, settings, onCountryClick }:
                     geography={geo}
                     onClick={() => {
                       // Find the best code for this geography
-                      const countryData = COUNTRIES.find(c => 
-                        c.id === geoId || c.name.toLowerCase() === geoName
+                      const geoIdStr = String(geoId).padStart(3, '0');
+                      const countryData = COUNTRIES.find(c =>
+                        c.id === geoId ||
+                        c.numeric === geoIdStr ||
+                        c.name.toLowerCase() === geoName ||
+                        c.aliases?.some(a => a.toLowerCase() === geoName)
                       );
                       const finalCode = countryData?.id || geoId;
                       const finalName = countryData?.name || geo.properties?.name || geo.properties?.NAME || "Unknown Country";
