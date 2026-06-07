@@ -37,8 +37,8 @@ jobs:
 
       - name: Zip App for Appetize
         run: |
-          APP_PATH=$(find build/Build/Products/Debug-iphonesimulator -name "*.app" | head -n 1)
-          zip -r App.zip "$APP_PATH"
+          cd build/Build/Products/Debug-iphonesimulator
+          zip -r ../../../App.zip App.app
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
