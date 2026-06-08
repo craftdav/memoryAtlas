@@ -21,7 +21,7 @@ jobs:
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Web App
         run: npm run build
@@ -71,8 +71,16 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK Components
+        run: |
+          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0-rc1"
+          echo "y" | sdkmanager --licenses
+
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Web App
         run: npm run build
@@ -86,13 +94,12 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Find and Move APK
+      - name: Rename and Move APK
         run: |
-          find android/app/build/outputs/apk/debug/ -name "*.apk" -exec mv {} MemoryAtlasv${{ steps.package-version.outputs.version }}.apk \;
+          find android/app/build/outputs/apk/debug/ -name "*.apk" -exec mv {} "MemoryAtlasv${{ steps.package-version.outputs.version }}.apk" \;
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MemoryAtlasv${{ steps.package-version.outputs.version }}-android
           path: MemoryAtlasv${{ steps.package-version.outputs.version }}.apk
-
