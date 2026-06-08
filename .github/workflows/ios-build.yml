@@ -65,10 +65,10 @@ jobs:
         id: package-version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: set up JDK 17
+      - name: set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'zulu'
 
       - name: Install Dependencies
@@ -86,9 +86,9 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Rename and Move APK
+      - name: Find and Move APK
         run: |
-          mv android/app/build/outputs/apk/debug/app-debug.apk MemoryAtlasv${{ steps.package-version.outputs.version }}.apk
+          find android/app/build/outputs/apk/debug/ -name "*.apk" -exec mv {} MemoryAtlasv${{ steps.package-version.outputs.version }}.apk \;
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
