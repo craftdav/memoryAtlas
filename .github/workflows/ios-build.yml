@@ -1,11 +1,11 @@
-name: Build iOS
+name: Build Mobile Apps
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-ios:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,6 +15,10 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+
+      - name: Get Version
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         run: npm install
@@ -38,10 +42,57 @@ jobs:
       - name: Zip App for Appetize
         run: |
           cd build/Build/Products/Debug-iphonesimulator
-          zip -r "$GITHUB_WORKSPACE/App.zip" App.app
+          zip -r "$GITHUB_WORKSPACE/MemoryAtlasv${{ steps.package-version.outputs.version }}.zip" App.app
 
-      - name: Upload Artifact
+      - name: Upload iOS Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-simulator-build
-          path: App.zip
+          name: MemoryAtlasv${{ steps.package-version.outputs.version }}-ios
+          path: MemoryAtlasv${{ steps.package-version.outputs.version }}.zip
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Get Version
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Web App
+        run: npm run build
+
+      - name: Capacitor Sync
+        run: npx cap sync android
+
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Rename and Move APK
+        run: |
+          mv android/app/build/outputs/apk/debug/app-debug.apk MemoryAtlasv${{ steps.package-version.outputs.version }}.apk
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MemoryAtlasv${{ steps.package-version.outputs.version }}-android
+          path: MemoryAtlasv${{ steps.package-version.outputs.version }}.apk
+
