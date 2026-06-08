@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, Search, Filter, Settings as SettingsIcon, User, Map as MapIcon, Calendar, Heart, Globe, Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { cn } from './lib/utils';
 import { VisitedLocation, UserSettings } from './types';
 import { COUNTRIES } from './lib/countries';
@@ -176,6 +176,7 @@ export default function App() {
         )}
         {(selectedLocation || isAddingNew) && (
           <LocationModal 
+            key={selectedLocation?.id || 'new'}
             location={selectedLocation}
             initialData={initialNewData}
             isNew={isAddingNew}

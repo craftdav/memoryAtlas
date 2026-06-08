@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Globe, Users, Landmark, Calendar, MapPin, Plus, Heart, HeartOff } from 'lucide-react';
+import { X, Globe, Users, Landmark, Calendar, MapPin, Plus, Heart } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import { VisitedLocation } from '../types';
 import { cn } from '../lib/utils';
 
@@ -189,7 +190,7 @@ export default function CountryDetailsModal({
                     darkMode ? "bg-slate-800" : "bg-gray-200"
                   )}>
                     {memory.images?.[0] ? (
-                      <img src={memory.images[0]} alt={memory.name} className="w-full h-full object-cover" />
+                      <img src={Capacitor.convertFileSrc(memory.images[0])} alt={memory.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center opacity-20">
                         <Globe size={32} />

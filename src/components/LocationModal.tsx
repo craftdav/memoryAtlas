@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, Reorder, useDragControls } from 'motion/react';
-import { X, Calendar, MapPin, Heart, Image as ImageIcon, Trash2, Globe, Save, Plus, Search, Loader2, User, Maximize2, GripVertical } from 'lucide-react';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { X, Calendar, MapPin, Heart, Image as ImageIcon, Trash2, Globe, Save, Plus, Search, Loader2, Maximize2, GripVertical } from 'lucide-react';
+import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import { VisitedLocation } from '../types';
 import { COUNTRIES } from '../lib/countries';
 import { cn } from '../lib/utils';
@@ -27,16 +28,16 @@ interface CityResult {
 }
 
 export default function LocationModal({ location, initialData, isNew, onClose, onSave, onDelete, darkMode }: LocationModalProps) {
-  const [formData, setFormData] = useState<Partial<VisitedLocation>>(
-    location || initialData || {
-      name: '',
-      countryCode: '',
-      date: new Date().toISOString().split('T')[0],
-      notes: '',
-      images: [],
-      isFavorite: false,
-    }
-  );
+  const [formData, setFormData] = useState<Partial<VisitedLocation>>({
+    name: '',
+    countryCode: '',
+    cityName: '',
+    date: new Date().toISOString().split('T')[0],
+    notes: '',
+    images: [],
+    isFavorite: false,
+    ...(location || initialData || {})
+  });
 
   const [citySearch, setCitySearch] = useState(location?.cityName || '');
   const [cityResults, setCityResults] = useState<CityResult[]>([]);
@@ -59,7 +60,6 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showGallery, setShowGallery] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
-  const [isDraggingToTrash, setIsDraggingToTrash] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-slide effect
@@ -257,9 +257,9 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
               className="flex h-full overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer touch-pan-x"
             >
               {formData.images.map((img, idx) => (
-                <div key={idx} className="relative min-w-full h-full snap-start">
+                <div key={`${img}-${idx}`} className="relative min-w-full h-full snap-start">
                   <img
-                    src={img}
+                    src={Capacitor.convertFileSrc(img)}
                     alt={`${formData.name} ${idx + 1}`}
                     className="w-full h-full object-cover"
                     draggable="false"
@@ -603,7 +603,7 @@ export default function LocationModal({ location, initialData, isNew, onClose, o
               <X size={32} />
             </button>
             <img
-              src={fullScreenImage}
+              src={Capacitor.convertFileSrc(fullScreenImage)}
               className="max-w-full max-h-full object-contain shadow-2xl"
               alt="Fullscreen"
             />
@@ -628,7 +628,7 @@ function GalleryItem({ img, onOpen, onDelete }: {
       dragListener={false}
       className="relative w-full aspect-video rounded-[2rem] overflow-hidden bg-white/5 flex items-center justify-center group touch-none"
     >
-      <img src={img} className="w-full h-full object-cover" alt="Gallery item" />
+      <img src={Capacitor.convertFileSrc(img)} className="w-full h-full object-cover" alt="Gallery item" />
 
       {/* Permanent Controls for Mobile */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 flex flex-col justify-between p-4">
